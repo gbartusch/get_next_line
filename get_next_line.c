@@ -6,63 +6,76 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/10/29 17:23:27 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/10/31 17:46:23 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include "get_next_line.h"
 
-char	*set_line(char *line_buffer)
+char	*set_line_and_leftover(char *buf, int i)
 {
-	line_buffer = '\0';
-}
-
-char	*buffer(int	fd, char *left , char *buf)
-{
-	int	bytes_read;
-	int	i;
-	char	*line;
 	unsigned int	start;
+	char			*line;
+	char			*left;
 
 	start = 0;
+	return (line);
+}
+
+char	*buffer(int fd, char *left, char *buf)
+{
+	int				i;
+	char			*line;
+	unsigned int	start;
+
 	i = 0;
-	bytes_read = read(fd, buf, BUFFER_SIZE);
-	while(buf[i])
+	start = 0;
+	read(fd, buf, BUFFER_SIZE);
+	while (buf[i])
 	{
 		if (buf[i] == '\n')
 		{
 			line = ft_substr(buf, start, i + 1);
+			printf("line that contains new line: %s\n", line);
 			left = ft_substr(buf, start + i + 1, BUFFER_SIZE - i - 1);
+			printf("leftover line: %s\n", left);
 		}
-	i++;
+		i++;
 	}
-	if (buf[i] == '\0')
-		line = ft_strdup(buf);
-	if (left[i])
+	if (buf[i] == '\0') //if no \n found
 	{
-		line = ft_strjoin(left, line);
+		if (left != NULL)
+			left = ft_strjoin(left, line);
+		else
+			left = ft_strdup(buf);
+		read(fd, buf, BUFFER_SIZE);
 	}
+	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	static char *left;
-	char	*buf;
+	static char	*left;
+	char		*buf;
+	char		*line;
 
 	left = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
+	if (!buf)
 		return (NULL);
-    buffer(fd, left, buf);
-
-	free(buffer);
+	line = buffer(fd, left, buf);
+	free(buf);
+	buf = NULL;
+	return (line);
 }
 
-void	main()
+#include <stdio.h>
+void	main(void)
 {
 	int	fd;
 

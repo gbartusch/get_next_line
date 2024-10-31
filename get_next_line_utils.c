@@ -6,11 +6,24 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:28 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/10/29 16:33:47 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/10/31 13:59:08 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i] != '\0')
+	{
+		i++;
+	}
+	return (i);
+}
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -68,5 +81,29 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ft_strcpy(str, (char *) s1);
 	ft_strcpy(str + s1_len, (char *) s2);
 	str[s1_len + s2_len] = '\0';
+	return (str);
+}
+
+char	*ft_strdup(const char *s1)
+{
+	char	*str;
+	int		length;
+	int		i;
+
+	i = 0;
+	length = 0;
+	while (s1[length] != '\0')
+	{
+		length++;
+	}
+	str = malloc(length + 1);
+	if (str == NULL)
+		return (NULL);
+	while (s1[i] != '\0')
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	str[i] = '\0';
 	return (str);
 }
