@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/10/31 17:46:23 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/10/31 17:51:04 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include "get_next_line.h"
-
-char	*set_line_and_leftover(char *buf, int i)
-{
-	unsigned int	start;
-	char			*line;
-	char			*left;
-
-	start = 0;
-	return (line);
-}
 
 char	*buffer(int fd, char *left, char *buf)
 {
