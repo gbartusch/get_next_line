@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:28 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/04 17:31:56 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/05 17:29:50 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,4 +193,20 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 		}
 	}
 	return (dst);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	char	chr;
+
+	chr = c;
+	while (*s != '\0')
+	{
+		if (*s == chr)
+			return ((char *)s);
+		s++;
+	}
+	if (chr == '\0')
+		return ((char *)s);
+	return (NULL);
 }
