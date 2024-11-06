@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/06 13:27:33 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/06 17:40:25 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ char	*check_leftover(char *left, char *line)
 	}
 	line = ft_strjoin(left, line);
 	printf("line after join: %s\n", line);
-	// ft_memmove(left, left + j + 1, ft_strlen(left) - j);
-	// if (left[j] == '\0')
 	left[0] = '\0';
 	printf("left after update: %s\n", left);
 	return (line);
@@ -55,42 +53,29 @@ char	*buffer(int fd, char *left, char *buf)
 {
 	int				i;
 	char			*line;
-	unsigned int	start;
 	int				bytes_read;
 
 	i = 0;
-	start = 0;
 	line = malloc(1);
 	if (line)
 		line[0] = '\0';
 	bytes_read = read(fd, buf, BUFFER_SIZE);
-	if (bytes_read < 0)
+	if (bytes_read <= 0)
 		return (NULL);
 	buf[bytes_read] = '\0';
 	printf("buf: %s\n", buf);
-	if (bytes_read == 0)
-	{	
-		line = check_leftover(left, line);
-		ft_strcat(left, buf);
-		printf("left: %s\n", left);
-		return (line);
-	}
+	
 	if (left[0] != '\0')
 	{
 		line = check_leftover(left, line);
-		if (line && ft_strchr(line, '\n'))
-		{
-			ft_strcat(left, buf);
-			printf("left: %s\n", left);
+		if (ft_strchr(line, '\n'))
 			return (line);
-		}
-		
 	}
 	while (buf[i])
 	{
 		if (buf[i] == '\n')
 		{
-			ft_strcat(line, ft_substr(buf, start, i + 1));
+			line = ft_strjoin(line, ft_substr(buf, 0, i + 1));
 			printf("line after buf added: %s\n", line);
 			ft_memmove(buf, buf + i + 1, ft_strlen(buf) - i);
 			printf("buf after buf update: %s\n", buf);
@@ -102,9 +87,15 @@ char	*buffer(int fd, char *left, char *buf)
 	i++;
 	}
 	//if no \n found
+	if (bytes_read == 0 && left[0] != '\0')
+	{
+		line = ft_strjoin(line, left);
+		left[0] = '\0'; // Clear left as we have processed it
+		return (line);
+	}
 	ft_strcat(left, buf);
 	printf("line in left: %s\n", left);
-	return (0);
+	return (NULL);
 }
 
 char	*get_next_line(int fd)
@@ -120,7 +111,7 @@ char	*get_next_line(int fd)
 	if (!buf)
 		return (NULL);
 	line = buffer(fd, left, buf);
-	while (line == 0)
+	while (line == NULL)
 		line = buffer(fd, left, buf);
 	free(buf);
 		buf = NULL;
