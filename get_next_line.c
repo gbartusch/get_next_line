@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/06 20:34:53 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/06 20:41:10 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ char	*buffer(int fd, char *left, char *buf)
 	i = 0;
 	if (line)
 		line[0] = '\0';
-
 	// Check for remaining content in left
 	if (left[0] != '\0')
 	{
@@ -58,13 +57,11 @@ char	*buffer(int fd, char *left, char *buf)
 		if (ft_strchr(line, '\n'))
 			return (line);
 	}
-
 	// Read loop
 		while ((bytes_read = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[bytes_read] = '\0';
 		i = 0;
-
 		// Look for newline in buf
 		while (buf[i] != '\0')
 		{
@@ -76,7 +73,6 @@ char	*buffer(int fd, char *left, char *buf)
 			}
 			i++;
 		}
-
 		// Append the full buffer to line if no newline was found
 		line = ft_strjoin(line, buf);
 	}
