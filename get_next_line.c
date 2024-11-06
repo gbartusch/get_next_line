@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/05 17:37:17 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:27:33 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include "get_next_line.h"
+#include <stdio.h>
 
-char	*new_line_in_leftover(char *left, char *temp2, int j)
+char	*new_line_in_leftover(char *left, char *line, int j)
 {
-	char	*line;
 	int		start;
 
 	start = 0;
@@ -25,64 +25,75 @@ char	*new_line_in_leftover(char *left, char *temp2, int j)
 	printf("line from left: %s\n", line);
 	ft_memmove(left, left + j + 1, ft_strlen(left) - j);
 	printf("line in left: %s\n", left);
-	// ft_strcat(left, temp2);
+	
 	return (line);
 }
 
-char	*check_leftover(char *left, char *temp2)
+char	*check_leftover(char *left, char *line)
 {
-	char	*line;
 	int		j;
-
 	j = 0;
 	while (left[j] != '\0') //if there's leftover content
 	{
 		if (left[j] == '\n') //find the new line
-		{	line = new_line_in_leftover(left, temp2, j);
+		{	line = new_line_in_leftover(left, line, j);
 			printf("line to be printed: %s\n", line);
 			return (line);
 		}
 	j++;
 	}
-	printf("temp2: %s\n", temp2);
-	if (!temp2)
-		return (left);
-	line = ft_strjoin(left, temp2);
+	line = ft_strjoin(left, line);
 	printf("line after join: %s\n", line);
-	free (temp2);
+	// ft_memmove(left, left + j + 1, ft_strlen(left) - j);
+	// if (left[j] == '\0')
+	left[0] = '\0';
+	printf("left after update: %s\n", left);
 	return (line);
-	// line = ft_strdup(left);
-	// left[0] = '\0';
 }
 
 char	*buffer(int fd, char *left, char *buf)
 {
 	int				i;
 	char			*line;
-	char			*temp2;
 	unsigned int	start;
 	int				bytes_read;
 
 	i = 0;
 	start = 0;
-	temp2 = 0;
+	line = malloc(1);
+	if (line)
+		line[0] = '\0';
 	bytes_read = read(fd, buf, BUFFER_SIZE);
+	if (bytes_read < 0)
+		return (NULL);
+	buf[bytes_read] = '\0';
 	printf("buf: %s\n", buf);
 	if (bytes_read == 0)
-	{	line = check_leftover(left, temp2);
-		printf("line in left: %s\n", left);
-		printf("line: %s\n", line);
+	{	
+		line = check_leftover(left, line);
+		ft_strcat(left, buf);
+		printf("left: %s\n", left);
 		return (line);
+	}
+	if (left[0] != '\0')
+	{
+		line = check_leftover(left, line);
+		if (line && ft_strchr(line, '\n'))
+		{
+			ft_strcat(left, buf);
+			printf("left: %s\n", left);
+			return (line);
+		}
+		
 	}
 	while (buf[i])
 	{
 		if (buf[i] == '\n')
 		{
-			temp2 = ft_substr(buf, start, i + 1);
-			printf("temp2: %s\n", temp2);
-			printf("left: %s\n", left);
-			line = check_leftover(left, temp2);
+			ft_strcat(line, ft_substr(buf, start, i + 1));
+			printf("line after buf added: %s\n", line);
 			ft_memmove(buf, buf + i + 1, ft_strlen(buf) - i);
+			printf("buf after buf update: %s\n", buf);
 			ft_strcat(left, buf);
 			printf("line in left: %s\n", left);
 			printf("line: %s\n", line);
@@ -112,23 +123,23 @@ char	*get_next_line(int fd)
 	while (line == 0)
 		line = buffer(fd, left, buf);
 	free(buf);
-	buf = NULL;
+		buf = NULL;
 	return (line);
 }
 
 #include <stdio.h>
-void	main(void)
+int	main(void)
 {
 	int	fd;
 	char	*line;
 
 	fd = open("text.txt", O_RDONLY);
 	line = get_next_line(fd);
-	printf("line printed: %s\n", line);
+	printf("LINE PRINTED: %s\n", line);
 	line = get_next_line(fd);
-	printf("line printed: %s\n", line);
+	printf("LINE PRINTED: %s\n", line);
 	line = get_next_line(fd);
-	printf("line printed: %s\n", line);
+	printf("LINE PRINTED: %s\n", line);
 	line = get_next_line(fd);
-	printf("line printed: %s\n", line);
+	printf("LINE PRINTED: %s\n", line);
 }
