@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ginabartusch <ginabartusch@student.42.f    +#+  +:+       +#+        */
+/*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/12 04:47:18 by ginabartusc      ###   ########.fr       */
+/*   Updated: 2024/11/12 14:54:51 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,15 @@ char	*buffer(int fd, char *buf, char *leftover)
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read == -1)
 			return (NULL);
-		else if (bytes_read == 0)
+		if (bytes_read == 0)
 			break ;
 		buf[bytes_read] = '\0';
 		if (!leftover)
 			leftover = ft_strdup("");
 		temp = leftover;
 		leftover = ft_strjoin(temp, buf);
+		if (!leftover)
+			return (NULL);
 		free(temp);
 		temp = NULL;
 		if (ft_strchr(buf, '\n'))
@@ -72,9 +74,12 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line = buffer(fd, buf, leftover);
 	free(buf);
-	buf = NULL;
 	if (!line)
+	{
+		free(leftover); // Clear leftover if read fails
+		leftover = NULL;
 		return (NULL);
+	}
 	leftover = extract(line);
 	return (line);
 }

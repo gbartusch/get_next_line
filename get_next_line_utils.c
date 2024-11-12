@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ginabartusch <ginabartusch@student.42.f    +#+  +:+       +#+        */
+/*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:28 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/12 03:43:16 by ginabartusc      ###   ########.fr       */
+/*   Updated: 2024/11/12 13:53:01 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,51 +121,4 @@ char	*ft_strdup(char *src)
 	}
 	dest[i] = '\0';
 	return (dest);
-}
-char	*ft_strcat(char *dest, char *src)
-{
-	unsigned int	i;
-	unsigned int	j;
-
-	i = 0;
-	j = 0;
-	while (dest[i] != '\0')
-	{
-		i++;
-	}
-	while (src[j] != '\0')
-	{
-		dest[i] = src[j];
-		i++;
-		j++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
-
-void	*ft_memmove(void *dst, const void *src, size_t len)
-{
-	size_t		i;
-	const char	*src1;
-	char		*dst1;
-
-	src1 = src;
-	dst1 = dst;
-	i = -1;
-	if (src1 == dst1)
-		return (dst);
-	if (dst1 < src1)
-	{
-		while (++i < len)
-			dst1[i] = src1[i];
-	}
-	else
-	{
-		while (len > 0)
-		{
-			dst1[len - 1] = src1[len - 1];
-			len--;
-		}
-	}
-	return (dst);
 }

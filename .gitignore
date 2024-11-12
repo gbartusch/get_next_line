@@ -1,0 +1,6 @@
+test
+a.out
+libft.a
+.vscode
+*.dSYM
+*.o
