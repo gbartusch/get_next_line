@@ -6,30 +6,42 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/12 14:54:51 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:13:04 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
 #include "get_next_line.h"
-#include <stdio.h>
 
-char	*extract(char *line)
+char	*ft_strchr(const char *s, int c)
 {
-	size_t	count;
+	char	chr;
+
+	chr = c;
+	while (*s != '\0')
+	{
+		if (*s == chr)
+			return ((char *)s);
+		s++;
+	}
+	if (chr == '\0')
+		return ((char *)s);
+	return (NULL);
+}
+
+char	*extract_line(char *line)
+{
+	size_t	line_size;
 	char	*leftover;
 
-	count = 0;
-	while (line[count] != '\n' && line[count])
-		count++;
-	if (line[count] == '\0' || line[count + 1] == '\0')
+	line_size = 0;
+	while (line[line_size] != '\n' && line[line_size])
+		line_size++;
+	if (line[line_size] == '\0' || line[line_size + 1] == '\0')
 		return (NULL);
-	leftover = ft_substr(line, count + 1, ft_strlen(line) - count);
+	leftover = ft_substr(line, line_size + 1, ft_strlen(line) - line_size);
 	if (!leftover)
-		return(NULL);
-	line[count + 1] = '\0';
+		return (NULL);
+	line[line_size + 1] = '\0';
 	return (leftover);
 }
 
@@ -51,10 +63,9 @@ char	*buffer(int fd, char *buf, char *leftover)
 			leftover = ft_strdup("");
 		temp = leftover;
 		leftover = ft_strjoin(temp, buf);
+		free(temp);
 		if (!leftover)
 			return (NULL);
-		free(temp);
-		temp = NULL;
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
@@ -76,11 +87,11 @@ char	*get_next_line(int fd)
 	free(buf);
 	if (!line)
 	{
-		free(leftover); // Clear leftover if read fails
+		free(leftover);
 		leftover = NULL;
 		return (NULL);
 	}
-	leftover = extract(line);
+	leftover = extract_line(line);
 	return (line);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ginabartusch <ginabartusch@student.42.f    +#+  +:+       +#+        */
+/*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:30 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/12 03:48:35 by ginabartusc      ###   ########.fr       */
+/*   Updated: 2024/11/14 09:58:58 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,12 @@
 # endif
 
 # include <unistd.h>
+# include <fcntl.h>
+# include <stdlib.h>
 
 char	*get_next_line(int fd);
 char	*buffer(int fd, char *left, char *buf);
-char	*check_leftover(char *left);
-char	*new_line_in_leftover(char *left, size_t j);
+char	*extract_line(char *line);
 void	*ft_memmove(void *dst, const void *src, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strcpy(char *dst, char *src);

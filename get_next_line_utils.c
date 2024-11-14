@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:28 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/12 13:53:01 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/14 09:52:22 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,22 +82,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ft_strcpy(str + s1_len, (char *) s2);
 	str[s1_len + s2_len] = '\0';
 	return (str);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	char	chr;
-
-	chr = c;
-	while (*s != '\0')
-	{
-		if (*s == chr)
-			return ((char *)s);
-		s++;
-	}
-	if (chr == '\0')
-		return ((char *)s);
-	return (NULL);
 }
 
 char	*ft_strdup(char *src)
