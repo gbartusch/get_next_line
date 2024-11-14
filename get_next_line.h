@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:30 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/14 09:58:58 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:16:57 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,11 @@
 char	*get_next_line(int fd);
 char	*buffer(int fd, char *left, char *buf);
 char	*extract_line(char *line);
-void	*ft_memmove(void *dst, const void *src, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strcpy(char *dst, char *src);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 size_t	ft_strlen(const char *s);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(char *src);
-char	*ft_strcat(char *dest, char *src);
 
 #endif
