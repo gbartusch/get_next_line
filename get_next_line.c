@@ -5,97 +5,104 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/17 19:50:00 by gbartusc         ###   ########.fr       */
+/*   Created: 2024/11/11 16:34:37 by gbartusc          #+#    #+#             */
+/*   Updated: 2024/11/17 20:02:08 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*ft_strchr(const char *s, int c)
-{
-	char	chr;
-
-	chr = c;
-	while (*s != '\0')
-	{
-		if (*s == chr)
-			return ((char *)s);
-		s++;
-	}
-	if (chr == '\0')
-		return ((char *)s);
-	return (NULL);
-}
-
-char	*extract_line(char *line)
-{
-	size_t	line_size;
-	char	*leftover;
-
-	line_size = 0;
-	while (line[line_size] != '\n' && line[line_size])
-		line_size++;
-	if (line[line_size] == '\0' || line[line_size + 1] == '\0')
-		return (NULL);
-	leftover = ft_substr(line, line_size + 1, ft_strlen(line) - line_size);
-	if (!leftover)
-		return (NULL);
-	line[line_size + 1] = '\0';
-	return (leftover);
-}
-
-char	*buffer(int fd, char *buf, char *leftover)
-{
-	int		bytes_read;
-	char	*temp;
-
-	bytes_read = 1;
-	while (bytes_read > 0)
-	{
-		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read == -1)
-			return (NULL);
-		if (bytes_read == 0)
-			break ;
-		buf[bytes_read] = '\0';
-		if (!leftover)
-			leftover = ft_strdup("");
-		temp = leftover;
-		leftover = ft_strjoin(temp, buf);
-		free(temp);
-		if (!leftover)
-			return (NULL);
-		if (ft_strchr(buf, '\n'))
-			break ;
-	}
-	return (leftover);
-}
+#include <stdio.h>
 
 char	*get_next_line(int fd)
 {
+	static char	leftover[BUFFER_SIZE + 1];
 	char		*line;
-	char		*buf;
-	static char	*leftover;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
-		return (NULL);
-	line = buffer(fd, buf, leftover);
-	free(buf);
-	if (!line)
-	{
-		free(leftover);
-		leftover = NULL;
-		return (NULL);
-	}
-	leftover = extract_line(line);
+	if (is_newline_found(leftover))
+		return (allocate_line(leftover, leftover));
+	line = get_line_from_file(fd, leftover);
 	return (line);
 }
 
+char	*join_allocated_strings(char *allocated_str1, char *allocated_str2)
+{
+	char	*line;
+	size_t	len;
+
+	if (!allocated_str1 || !allocated_str2)
+		return (free(allocated_str1), free(allocated_str2), NULL);
+	len = gnl_strlen(allocated_str1);
+	len += gnl_strlen(allocated_str2);
+	line = malloc(sizeof(char) * len + 1);
+	if (!line)
+		return (NULL);
+	gnl_strcpy(line, allocated_str1);
+	gnl_strcpy(line + gnl_strlen(line), allocated_str2);
+	free(allocated_str1);
+	free(allocated_str2);
+	return (line);
+}
+
+char	*get_line_from_file(int fd, char *leftover)
+{
+	char	buffer[BUFFER_SIZE + 1];
+	char	*line;
+	int		read_status;
+
+	line = NULL;
+	read_status = read(fd, buffer, BUFFER_SIZE);
+	if (read_status == -1)
+		return (NULL);
+	if (*leftover)
+	{
+		line = allocate_line(leftover, leftover);
+		if (read_status == 0 || !line)
+			return (line);
+	}
+	if (read_status == 0)
+		return (NULL);
+	while (read_status > 0)
+	{
+		buffer[read_status] = '\0';
+		if (!line)
+			line = allocate_line(buffer, leftover);
+		else
+			line = \
+				join_allocated_strings(line, allocate_line(buffer, leftover));
+		if (is_newline_found(line))
+			return (line);
+		read_status = read(fd, buffer, BUFFER_SIZE);
+	}
+	return (line);
+}
+
+char	*allocate_line(const char *get_from, char *leftover)
+{
+	char			*line;
+	size_t			i;
+
+	i = 0;
+	line = malloc(sizeof(char) * newline_position(get_from) + 1);
+	if (!line)
+		return (NULL);
+	while (get_from[i] && get_from[i] != '\n')
+	{
+		line[i] = get_from[i];
+		i++;
+	}
+	if (get_from[i] == '\n')
+	{
+		line[i] = '\n';
+		i++;
+	}
+	line[i] = '\0';
+	gnl_strcpy(leftover, get_from + i);
+	return (line);
+}
+
+// #include "get_next_line.h"
 // #include <stdio.h>
+
 // int	main(void)
 // {
 // 	int	fd = open("text.txt", O_RDONLY);

@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:30 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/17 19:49:41 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/17 18:07:13 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,19 @@
 # endif
 
 # include <unistd.h>
-# include <fcntl.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <stdbool.h>
 
 char	*get_next_line(int fd);
-char	*buffer(int fd, char *left, char *buf);
-char	*extract_line(char *line);
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_strcpy(char *dst, char *src);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
-size_t	ft_strlen(const char *s);
-char	*ft_strchr(const char *s, int c);
-char	*ft_strdup(char *src);
+char	*join_allocated_strings(char *allocated_str1, char *allocated_str2);
+size_t	gnl_strlen(char *str);
+char	*get_line_from_file(int fd, char *leftover);
+bool	is_newline_found(char *check);
+size_t	newline_position(const char *check);
+char	*allocate_no_newline(char *source);
+char	*allocate_line(const char *get_from, char *leftover);
+char*	gnl_strcpy(char *dst, const char* src);
 
 #endif
