@@ -6,7 +6,7 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:28 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/07 18:46:20 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/17 19:50:12 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,18 +84,25 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (str);
 }
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strdup(char *src)
 {
-	char	chr;
+	int		i;
+	char	*dest;
 
-	chr = c;
-	while (*s != '\0')
+	i = 0;
+	while (src[i])
 	{
-		if (*s == chr)
-			return ((char *)s);
-		s++;
+		i++;
 	}
-	if (chr == '\0')
-		return ((char *)s);
-	return (NULL);
+	dest = (char *)malloc ((i + 1) * sizeof (char));
+	i = 0;
+	if (dest == NULL)
+		return (0);
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
 }

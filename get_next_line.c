@@ -6,164 +6,92 @@
 /*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:33 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/07 19:09:40 by gbartusc         ###   ########.fr       */
+/*   Updated: 2024/11/17 19:50:00 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
 #include "get_next_line.h"
-#include <stdio.h>
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
+char	*ft_strchr(const char *s, int c)
 {
-	size_t		i;
-	const char	*src1;
-	char		*dst1;
+	char	chr;
 
-	src1 = src;
-	dst1 = dst;
-	i = -1;
-	if (src1 == dst1)
-		return (dst);
-	if (dst1 < src1)
+	chr = c;
+	while (*s != '\0')
 	{
-		while (++i < len)
-			dst1[i] = src1[i];
+		if (*s == chr)
+			return ((char *)s);
+		s++;
 	}
-	else
-	{
-		while (len > 0)
-		{
-			dst1[len - 1] = src1[len - 1];
-			len--;
-		}
-	}
-	return (dst);
+	if (chr == '\0')
+		return ((char *)s);
+	return (NULL);
 }
 
-char	*new_line_in_leftover(char *left, size_t j)
+char	*extract_line(char *line)
 {
-	char	*line;
+	size_t	line_size;
+	char	*leftover;
 
-	line = ft_substr(left, 0, j + 1);// Extract up to the newline
-	if (!line)
+	line_size = 0;
+	while (line[line_size] != '\n' && line[line_size])
+		line_size++;
+	if (line[line_size] == '\0' || line[line_size + 1] == '\0')
 		return (NULL);
-	ft_memmove(left, left + j + 1, ft_strlen(left) - j);// Shift remaining content
-	return (line);
-}
-
-char	*check_leftover(char *left, char *line)
-{
-	size_t		j;
-	char		*temp;
-
-	j = 0;
-	while (left[j] != '\0')
-	{
-		if (left[j] == '\n')
-		{
-			free (line);
-			line = new_line_in_leftover(left, j);
-			if (!line)
-				return (NULL);
-			return (line);
-		}
-		j++;
-	}
-	temp = line;
-	line = ft_strjoin(line, left);
-	if (!line)
-	{
-		free(temp);
+	leftover = ft_substr(line, line_size + 1, ft_strlen(line) - line_size);
+	if (!leftover)
 		return (NULL);
-	}
-	free (temp);
-	left[0] = '\0';
-	return (line);
+	line[line_size + 1] = '\0';
+	return (leftover);
 }
 
-char	*buffer(int fd, char *left, char *buf)
+char	*buffer(int fd, char *buf, char *leftover)
 {
 	int		bytes_read;
-	char	*line;
-	int		i;
 	char	*temp;
-	char	*substr;
 
-	line = malloc(BUFFER_SIZE + 1 * sizeof(char));
-	if (!line)
-		return (NULL);
-	line[0] = '\0';
-	if (left[0] != '\0') // Check for remaining content in left
+	bytes_read = 1;
+	while (bytes_read > 0)
 	{
-		line = check_leftover(left, line);
-		if (!line)
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+		if (bytes_read == -1)
 			return (NULL);
-		if (ft_strchr(line, '\n'))
-			return (line);
-	}
-	while ((bytes_read = read(fd, buf, BUFFER_SIZE)) > 0)
-	{
+		if (bytes_read == 0)
+			break ;
 		buf[bytes_read] = '\0';
-		i = 0;
-		while (buf[i] != '\0') // Look for newline in buf
-		{
-			if (buf[i] == '\n')
-			{
-				substr = ft_substr(buf, 0, i + 1);
-				if (!substr)
-				{
-					free(line);
-					return (NULL);
-				}
-				temp = line;
-				line = ft_strjoin(line, substr);
-				free (temp);
-				free (substr);
-				if (!line)
-					return (NULL);
-				ft_memmove(left, buf + i + 1, ft_strlen(buf) - i);
-				return (line);
-			}
-			i++;
-		}
-		temp = line;
-		line = ft_strjoin(line, buf); // Append the full buffer to line if no newline was found
-		if (!line)
-		{
-			free(temp);
+		if (!leftover)
+			leftover = ft_strdup("");
+		temp = leftover;
+		leftover = ft_strjoin(temp, buf);
+		free(temp);
+		if (!leftover)
 			return (NULL);
-		}
-		free (temp);
+		if (ft_strchr(buf, '\n'))
+			break ;
 	}
-	// if (bytes_read == 0 && left[0] != '\0') 	// Handle final leftover data at EOF
-	// {
-	// 	line = ft_strjoin(line, left);
-	// 	left[0] = '\0';
-	// 	return (line);
-	// }
-	if (bytes_read == 0 && line[0] != '\0')
-		return (line);
-	free(line);
-	return (NULL);
+	return (leftover);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	left[BUFFER_SIZE];
-	char		*buf;
 	char		*line;
+	char		*buf;
+	static char	*leftover;
 
-	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (fd < 0 || BUFFER_SIZE <= 0 || !buf)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
+		return (NULL);
+	line = buffer(fd, buf, leftover);
+	free(buf);
+	if (!line)
 	{
-		free(buf);
+		free(leftover);
+		leftover = NULL;
 		return (NULL);
 	}
-	line = buffer(fd, left, buf);
-	free(buf);
+	leftover = extract_line(line);
 	return (line);
 }
 
