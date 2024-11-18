@@ -6,7 +6,7 @@
 /*   By: ginabartusch <ginabartusch@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 17:45:28 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/18 12:03:35 by ginabartusc      ###   ########.fr       */
+/*   Updated: 2024/11/18 12:12:20 by ginabartusc      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*join_allocated_strings(char *allocated_str1, char *allocated_str2)
 	len += gnl_strlen(allocated_str2);
 	line = malloc(sizeof(char) * len + 1);
 	if (!line)
-		return (NULL);
+		return (free(allocated_str1), free(allocated_str2), NULL);
 	gnl_strcpy(line, allocated_str1);
 	gnl_strcpy(line + gnl_strlen(line), allocated_str2);
 	free(allocated_str1);
