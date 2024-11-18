@@ -6,7 +6,7 @@
 /*   By: ginabartusch <ginabartusch@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 16:34:37 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/18 11:51:41 by ginabartusc      ###   ########.fr       */
+/*   Updated: 2024/11/18 12:03:24 by ginabartusc      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ char	*get_from_file(int fd, char *line, char *leftover)
 		else
 			line = \
 				join_allocated_strings(line, allocate_line(buffer, leftover));
+		if (!line)
+			return (NULL);
 		if (is_newline_found(line))
 			return (line);
 		read_status = read(fd, buffer, BUFFER_SIZE);
@@ -63,7 +65,10 @@ char	*allocate_line(const char *get_from, char *leftover)
 	size_t			i;
 
 	i = 0;
-	line = malloc(sizeof(char) * newline_position(get_from) + 2);
+	if (is_newline_found(get_from))
+		line = malloc(sizeof(char) * newline_position(get_from) + 2);
+	else
+		line = malloc(sizeof(char) * newline_position(get_from) + 1);
 	if (!line)
 		return (NULL);
 	while (get_from[i] && get_from[i] != '\n')
