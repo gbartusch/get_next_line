@@ -5,3 +5,4 @@ libft.a
 *.dSYM
 *.o
 test.c
+text.txt
