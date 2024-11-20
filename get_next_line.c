@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ginabartusch <ginabartusch@student.42.f    +#+  +:+       +#+        */
+/*   By: gbartusc <gbartusc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 16:34:37 by gbartusc          #+#    #+#             */
-/*   Updated: 2024/11/18 12:03:24 by ginabartusc      ###   ########.fr       */
+/*   Updated: 2024/11/20 15:42:38 by gbartusc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ char	*get_from_file(int fd, char *line, char *leftover)
 		read_status = read(fd, buffer, BUFFER_SIZE);
 		if (read_status == -1)
 			return (clear(leftover), free(line), NULL);
-		buffer[read_status] = '\0';
 	}
 	return (line);
 }
